@@ -1,4 +1,4 @@
-OBJS = hw6.o utility.o primes.o bigInteger.o trialdiv.o
+OBJS = hw6.o utility.o primes.o bigInteger.o trialdiv.o millerrabin.o
 CXXFLAGS = -g -Wall
 CXX = g++
 
@@ -6,8 +6,9 @@ hw6: $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) -o hw6
 test: utility.o bigInteger.o test.o
 	$(CXX) -g -W -std=c++11 utility.o bigInteger.o test.o -o test
-	./test
 
+millerrabin.o: millerrabin.h millerrabin.cpp
+	$(CXX) $(CXXFLAGS) -c millerrabin.cpp
 utility.o: utility.h utility.cpp
 	$(CXX) $(CXXFLAGS) -c utility.cpp
 primes.o: primes.h primes.cpp

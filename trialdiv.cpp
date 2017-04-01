@@ -13,37 +13,20 @@ void trialdiv(const string &number, const string &primesfile) {
 	}
 	bigInteger b_number(number);
 	bigInteger b_end(b_number.sqrt());
-	ifstream in(primesfile);
-	if (!in.is_open()) {
-		fatal("%s can't be opened!\n", primesfile.c_str());
-	}
-	unsigned char byte;
-	int maxVal = -1, prime = -2;
+	PrimesIterator itr(primesfile);
 	while (true) {
-		prime = 0;
-		for (int i = 0; i < 4; ++i) {
-			if (!(in >> noskipws >> byte)) {
-				fatal("Malformed primesfile %s\n", primesfile.c_str());
-			}
-			prime = (prime << 8) | byte;
-		}
-		if (maxVal < 0) {
-			maxVal = prime;
-			continue;
+		int prime = itr.next();
+		if (prime < 0) {
+			printf("n passes trial division test (not enough primes)\n");
 		}
 		bigInteger b_prime(prime);
 		if (b_prime > b_end) {
-			printf("%s passes trial division test\n", number.c_str());
+			printf("n passes trial division test\n");
 			return;
 		}
 		if (b_number % b_prime == bigInteger(0)) {
-			printf("%s is composite by trial division (mod %d = 0)\n",
-				number.c_str(), prime);
+			printf("n is composite by trial division (mod %d = 0)\n", prime);
 			return;
 		}
-		if (maxVal == prime) {
-			break;
-		}
 	}
-	printf("%s passes trial division test (not enough primes)\n", number.c_str());
 }

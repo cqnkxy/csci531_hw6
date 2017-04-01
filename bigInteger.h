@@ -14,19 +14,24 @@ public:
 	bigInteger(const std::string&);
 	bigInteger(const bigInteger&);
 	bool operator== (const bigInteger &) const;
+	bool operator!= (const bigInteger &) const;
 	bigInteger operator+(const bigInteger &) const;
+	bigInteger operator-(const bigInteger &) const;
 	bool operator< (const bigInteger &) const;
 	bool operator> (const bigInteger &) const;
+	bool operator>= (const bigInteger &) const;
+	bool operator<= (const bigInteger &) const;
 	bigInteger operator% (const bigInteger&) const;
 	bigInteger operator/ (const bigInteger&) const;
 	bigInteger operator* (const bigInteger&) const;
 	bigInteger sqrt() const;
 	const std::string &getNumber() const;
-private:
-	std::pair<std::string, long long> divide(const std::string&, long long) const;
-	std::string multiply(const std::string&, const std::string&) const;
-	std::string add(const std::string&, const std::string&) const; //both positve
-	std::string subtract(const std::string&, const std::string&) const; //subtrahend <= minuend
+	static std::pair<std::string, long long> divide(const std::string&, long long);
+	static std::string multiply(const std::string&, const std::string&);
+	static std::string add(const std::string&, const std::string&); //both positve
+	static std::string subtract(const std::string&, const std::string&); //subtrahend <= minuend
 };
+
+std::pair<bigInteger, bigInteger> divmod(const bigInteger&, const bigInteger&);
 
 #endif

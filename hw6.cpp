@@ -5,6 +5,7 @@
 #include "utility.h"
 #include "primes.h"
 #include "trialdiv.h"
+#include "millerrabin.h"
 
 using namespace std;
 
@@ -52,6 +53,26 @@ void parse_trialdiv(int argc, char *argv[]) {
 	trialdiv(number, primesfile);
 }
 
+void parse_millerrabin(int argc, char *argv[]) {
+	if (argc != 5) {
+		malformed_command();
+	}
+	string number, maxitr, primesfile;
+	for (int i = 2; i <= 4; ++i) {
+		string opt(argv[i]);
+		if (opt.substr(0, 3) == "-n=") {
+			number = opt.substr(3, -1);
+		} else if (opt.substr(0, 3) == "-t=") {
+			maxitr = opt.substr(3, -1);
+		} else if (opt.substr(0, 3) == "-p=") {
+			primesfile = opt.substr(3, -1);
+		} else {
+			malformed_command();
+		}
+	}
+	millerrabin(number, maxitr, primesfile);
+}
+
 void parse_cmd_run(int argc, char *argv[]) {
 	if (argc < 3) {
 		malformed_command();
@@ -59,6 +80,8 @@ void parse_cmd_run(int argc, char *argv[]) {
 		parse_primes(argc, argv);
 	} else if (strcmp(argv[1], "trialdiv") == 0){
 		parse_trialdiv(argc, argv);
+	} else if (strcmp(argv[1], "millerrabin") == 0) {
+		parse_millerrabin(argc, argv);
 	} else {
 		malformed_command();
 	}

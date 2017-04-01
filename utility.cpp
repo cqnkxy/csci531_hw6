@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <fstream>
 #include <cassert>
 #include <vector>
 #include "utility.h"
@@ -7,6 +8,36 @@
 using namespace std;
 
 const bool DEBUG = true;
+
+PrimesIterator::PrimesIterator(const string &primesfile):in(primesfile.c_str()) {
+	if (!in.is_open()) {
+		fatal("%s can't be opened!\n", primesfile.c_str());
+	}
+	unsigned char byte;
+	int prime = 0;
+	for (int i = 0; i < 4; ++i) {
+		if (!(in >> noskipws >> byte)) {
+			fatal("Malformed primesfile %s\n", primesfile.c_str());
+		}
+		prime = (prime << 8) | byte;
+	}
+}
+
+int PrimesIterator::next() {
+	int prime = 0;
+	unsigned char byte;
+	for (int i = 0; i < 4; ++i) {
+		if (!(in >> noskipws >> byte)) {
+			if (i != 0) {
+				fatal("Malformed primesfile\n");
+			} else {
+				return -1;
+			}
+		}
+		prime = (prime << 8) | byte;
+	}
+	return prime;
+}
 
 void fatal(const char *fmt, ...) {
 	va_list args;
