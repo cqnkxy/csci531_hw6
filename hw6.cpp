@@ -4,16 +4,17 @@
 #include <vector>
 #include "utility.h"
 #include "primes.h"
+#include "trialdiv.h"
 
 using namespace std;
 
 void malformed_command() {
 	const string USAGE = 
-		"\t\nhw6 primes -n=maxval"
-	    "\t\nhw6 trialdiv -n=number -p=primesfile"
-	    "\t\nhw6 millerrabin -n=number -t=maxitr -p=primesfile"
-	    "\t\nhw6 rndsearch -k=numbits -t=maxitr -p=primesfile -r=rndfile"
-	    "\t\nhw6 maurer -k=numbits -p=primesfile -r=rndfile";
+		"\n\thw6 primes -n=maxval"
+	    "\n\thw6 trialdiv -n=number -p=primesfile"
+	    "\n\thw6 millerrabin -n=number -t=maxitr -p=primesfile"
+	    "\n\thw6 rndsearch -k=numbits -t=maxitr -p=primesfile -r=rndfile"
+	    "\n\thw6 maurer -k=numbits -p=primesfile -r=rndfile\n";
 
 	cerr << "Malformed command. Use it as:" << endl << USAGE << endl;
 	exit(1);
@@ -33,11 +34,31 @@ void parse_primes(int argc, char *argv[]) {
 	primes(maxval);
 }
 
+void parse_trialdiv(int argc, char *argv[]) {
+	if (argc != 4) {
+		malformed_command();
+	}
+	string number, primesfile;
+	for (int i = 2; i <= 3; ++i) {
+		string opt(argv[i]);
+		if (opt.substr(0, 3) == "-n=") {
+			number = opt.substr(3, -1);
+		} else if (opt.substr(0, 3) == "-p=") {
+			primesfile = opt.substr(3, -1);
+		} else {
+			malformed_command();
+		}
+	}
+	trialdiv(number, primesfile);
+}
+
 void parse_cmd_run(int argc, char *argv[]) {
 	if (argc < 3) {
 		malformed_command();
 	} else if (strcmp(argv[1], "primes") == 0) {
 		parse_primes(argc, argv);
+	} else if (strcmp(argv[1], "trialdiv") == 0){
+		parse_trialdiv(argc, argv);
 	} else {
 		malformed_command();
 	}
