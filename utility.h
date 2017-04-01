@@ -11,6 +11,7 @@ private:
 	std::ifstream in;
 public:
 	PrimesIterator(const std::string &primesfile);
+	~PrimesIterator() { in.close(); }
 	int next();
 };
 void fatal(const char *fmt, ...);

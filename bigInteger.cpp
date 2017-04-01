@@ -2,6 +2,7 @@
 #include <utility>
 #include <vector>
 #include <cstdlib>
+#include <cassert>
 #include "bigInteger.h"
 #include "utility.h"
 
@@ -23,6 +24,10 @@ bigInteger::bigInteger(const std::string &num) {
 
 bigInteger::bigInteger(const bigInteger &bigInt) {
 	this->number = bigInt.getNumber();
+}
+
+void bigInteger::push_back(char ch) {
+	this->number += ch;
 }
 
 const string &bigInteger::getNumber() const {
@@ -58,12 +63,12 @@ bool bigInteger::operator> (const bigInteger &bigInt) const {
 }
 
 bigInteger bigInteger::operator/ (const bigInteger &bigInt) const {
-	pair<string, long long> res = divide(this->getNumber(), atol(bigInt.getNumber().c_str()));
+	pair<string, string> res = divide(this->getNumber(), bigInt.getNumber());
 	return res.first;
 }
 
 bigInteger bigInteger::operator% (const bigInteger &bigInt) const {
-	pair<string, long long> res = divide(this->getNumber(), atol(bigInt.getNumber().c_str()));
+	pair<string, string> res = divide(this->getNumber(), bigInt.getNumber());
 	return res.second;
 }
 
@@ -96,25 +101,37 @@ bigInteger bigInteger::sqrt() const {
 	return res;
 }
 
-pair<string, long long> bigInteger::divide(const string &dividend, long long divisor) {
-	if (dividend.size() == 0) {
-		return make_pair("0", 0);
+pair<string, string> bigInteger::divide(const string &dividend, const string &divisor) {
+	assert(divisor.size() != 0);
+	if (bigInteger(dividend) < bigInteger(divisor)) {
+		return make_pair("0", dividend);
 	}
-	long long remainder = 0;
-	string quotient;
-	for(int i = 0; i < (int)dividend.size(); ++i) {
-		remainder = (remainder * 10) + (dividend[i] - '0');
-		quotient += remainder / divisor + '0';
-		if (quotient.front() == '0') {
-			// of size 1 and is "0"
-			quotient.pop_back();
+	bigInteger b_dividend(dividend), b_divisor(divisor);
+	bigInteger b_quotient, b_remainder = dividend.substr(0, divisor.size()-1);
+	for (size_t i = divisor.size()-1; i < dividend.size(); ++i) {
+		if (b_remainder == 0) {
+			b_remainder = b_remainder + (dividend[i]-'0');
+		} else {
+			b_remainder.push_back(dividend[i]);
 		}
-		remainder %= divisor;
+		int beg = 0, end = 9, q;
+		while (beg <= end) {
+			int m = (beg + end) / 2;
+			if (b_remainder >= b_divisor * m) {
+				q = m;
+				beg = m+1;
+			} else {
+				end = m-1;
+			}
+		}
+		b_remainder = b_remainder - b_divisor * q;
+		if (b_quotient == 0) {
+			b_quotient = b_quotient + q;
+		} else {
+			b_quotient.push_back('0' + q);
+		}
 	}
-	if(quotient.length() == 0) {
-		quotient = "0";
-	}
-	return make_pair(quotient, remainder);
+	return make_pair(b_quotient.getNumber(), b_remainder.getNumber());
 }
 
 string bigInteger::multiply(const string &n1, const string &n2) {
@@ -165,8 +182,8 @@ string bigInteger::add(const string &n1, const string &n2) {
 }
 
 string bigInteger::subtract(const string &n1, const string &n2) {
-	if (n1 < n2) {
-		fatal("%s has to be bigger than %s", n1.c_str(), n2.c_str());
+	if (bigInteger(n1) < bigInteger(n2)) {
+		fatal("bigInteger subtract: %s has to be bigger than %s\n", n1.c_str(), n2.c_str());
 	}
 	vector<int> ans;
 	int sz1 = n1.size(), sz2 = n2.size();
@@ -191,6 +208,14 @@ string bigInteger::subtract(const string &n1, const string &n2) {
 }
 
 pair<bigInteger, bigInteger> divmod(const bigInteger &dividend, const bigInteger &divisor){
-	pair<string, long long> res = bigInteger::divide(dividend.getNumber(), atol(divisor.getNumber().c_str()));
+	pair<string, string> res = bigInteger::divide(dividend.getNumber(), divisor.getNumber());
 	return make_pair(bigInteger(res.first), bigInteger(res.second));
+}
+
+bigInteger binToBigInteger(const string &bin) {
+	bigInteger ans(0);
+	for (size_t i = 0; i < bin.size(); ++i) {
+		ans = ans * 256 + (unsigned char)bin[i];
+	}
+	return ans;
 }

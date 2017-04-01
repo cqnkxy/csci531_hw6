@@ -6,6 +6,7 @@
 #include "primes.h"
 #include "trialdiv.h"
 #include "millerrabin.h"
+#include "rndsearch.h"
 
 using namespace std;
 
@@ -73,6 +74,28 @@ void parse_millerrabin(int argc, char *argv[]) {
 	millerrabin(number, maxitr, primesfile);
 }
 
+void parse_rndsearch(int argc, char *argv[]) {
+	if (argc != 6) {
+		malformed_command();
+	}
+	string numbits, maxitr, primesfile, rndfile;
+	for (int i = 2; i <= 5; ++i) {
+		string opt(argv[i]);
+		if (opt.substr(0, 3) == "-k=") {
+			numbits = opt.substr(3, -1);
+		} else if (opt.substr(0, 3) == "-t=") {
+			maxitr = opt.substr(3, -1);
+		} else if (opt.substr(0, 3) == "-p=") {
+			primesfile = opt.substr(3, -1);
+		} else if (opt.substr(0, 3) == "-r=") {
+			rndfile = opt.substr(3, -1);
+		} else {
+			malformed_command();
+		}
+	}
+	rndsearch(numbits, maxitr, primesfile, rndfile);
+}
+
 void parse_cmd_run(int argc, char *argv[]) {
 	if (argc < 3) {
 		malformed_command();
@@ -82,6 +105,8 @@ void parse_cmd_run(int argc, char *argv[]) {
 		parse_trialdiv(argc, argv);
 	} else if (strcmp(argv[1], "millerrabin") == 0) {
 		parse_millerrabin(argc, argv);
+	} else if (strcmp(argv[1], "rndsearch") == 0) {
+		parse_rndsearch(argc, argv);
 	} else {
 		malformed_command();
 	}

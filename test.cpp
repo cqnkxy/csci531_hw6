@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <cassert>
 #include "bigInteger.h"
 #include "utility.h"
 #include "millerrabin.h"
@@ -15,7 +16,7 @@ void test_sqrt() {
 	for (int i = 0; i < (int)nums.size(); ++i) {
 		bigInteger num(nums[i]);
 		if (num.sqrt().getNumber() != sqrts[i]) {
-			fatal("sqrt(%s) != %s", nums[i].c_str(), sqrts[i].c_str());
+			fatal("sqrt(%s) != %s\n", nums[i].c_str(), sqrts[i].c_str());
 		}
 	}
 }
@@ -32,7 +33,7 @@ void test_divide() {
 		bigInteger dividend(dividends[i]), divisor(divisors[i]);
 		bigInteger q = dividend / divisor;
 		if (q.getNumber() != ans[i]) {
-			fatal("%s / %s != %s",
+			fatal("%s / %s != %s\n",
 				dividend.getNumber().c_str(),
 				divisor.getNumber().c_str(),
 				ans[i].c_str());
@@ -40,11 +41,24 @@ void test_divide() {
 	}
 }
 
-void test_subtract() {
-	
+void test_binToBigInteger() {
+	vector<string> bins{{0x1b}, {0x01, (char)0xff}, {(char)0xb1, (char)0x87}};
+	vector<string> bigInts{"27", "511", "45447"};
+	for (size_t i = 0; i < bins.size(); ++i) {
+		assert(binToBigInteger(bins[i]) == bigInts[i]);
+	}
+}
+
+void test_computeY() {
+	bigInteger a(2), r("111381455941452599284158543617336073123"), n("222762911882905198568317087234672146247");
+	bigInteger y = computeY(a, r, n);
+	y = y * y % n;
+	assert(y == 1);
 }
 
 int main() {
 	test_sqrt();
 	test_divide();
+	test_binToBigInteger();
+	test_computeY();
 }

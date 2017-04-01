@@ -5,10 +5,12 @@
 #include "bigInteger.h"
 
 bigInteger computeY(bigInteger &a, bigInteger &r, bigInteger &n);
-void millerrabin(
+bool millerrabin(
 	const std::string &number,
 	const std::string &maxitr,
-	const std::string &primefile
+	const std::string &primefile,
+	bool output=true,
+	int addtional_leading_space=0
 );
 
 #endif

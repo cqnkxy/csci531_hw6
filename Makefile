@@ -1,12 +1,15 @@
-OBJS = hw6.o utility.o primes.o bigInteger.o trialdiv.o millerrabin.o
+OBJS = utility.o primes.o bigInteger.o trialdiv.o millerrabin.o \
+	rndsearch.o
 CXXFLAGS = -g -Wall
 CXX = g++
 
-hw6: $(OBJS)
-	$(CXX) $(CXXFLAGS) $(OBJS) -o hw6
-test: utility.o bigInteger.o test.o
-	$(CXX) -g -W -std=c++11 utility.o bigInteger.o test.o -o test
+hw6: $(OBJS) hw6.o 
+	$(CXX) $(CXXFLAGS) $(OBJS) hw6.o -o hw6
+test: $(OBJS) test.o
+	$(CXX) -g -W -std=c++11 $(OBJS) test.o -o test
 
+rndsearch.o: rndsearch.h rndsearch.cpp
+	$(CXX) $(CXXFLAGS) -c rndsearch.cpp
 millerrabin.o: millerrabin.h millerrabin.cpp
 	$(CXX) $(CXXFLAGS) -c millerrabin.cpp
 utility.o: utility.h utility.cpp

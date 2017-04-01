@@ -40,10 +40,12 @@ bigInteger computeY(bigInteger &a, bigInteger &r, bigInteger &n) {
 	return half * half % n;
 }
 
-void millerrabin(
+bool millerrabin(
 	const string &number,
 	const string &maxitr,
-	const string &primefile
+	const string &primefile,
+	bool output,
+	int als
 ){
 	if (!all_dec(number) || !all_dec(maxitr)) {
 		fatal("%s and %s must be all [0-9]\n", number.c_str(), maxitr.c_str());
@@ -60,10 +62,14 @@ void millerrabin(
 		s += 1;
 		tmp = res.first;
 	}
-	printf("n = %s\n", number.c_str());
-	printf("  n-1 = %s\n", (n-1).getNumber().c_str());
-	printf("  s = %d\n", s);
-	printf("  r = %s\n", r.getNumber().c_str());
+	if (output) {
+		if (als == 0) {
+			printf("n = %s\n", number.c_str());
+		}
+		printf("  %sn-1 = %s\n", string(als, ' ').c_str(), (n-1).getNumber().c_str());
+		printf("  %ss = %d\n", string(als, ' ').c_str(), s);
+		printf("  %sr = %s\n", string(als, ' ').c_str(), r.getNumber().c_str());
+	}
 	int n_maxitr = atoi(maxitr.c_str());
 	assert(r % 2 == 1);
 	for (int i = 1; i <= n_maxitr; ++i ){
@@ -71,38 +77,51 @@ void millerrabin(
 		assert(prime > 0);
 		bigInteger a(prime);
 		if (a >= n-1) {
-			printf("  Itr %d of %d, a = %s (failed)\n,", 
-				i, n_maxitr, a.getNumber().c_str());
-			printf("Miller-Rabin failure, maxitr is too large\n");
-			return;
+			if (output) {
+				printf("  %sItr %d of %d, a = %s (failed)\n", 
+					string(als, ' ').c_str(), i, n_maxitr, a.getNumber().c_str());
+				printf("%sMiller-Rabin failure, maxitr is too large\n", string(als, ' ').c_str());
+			}
+			return false;
 		}
 		bigInteger y = computeY(a, r, n);
-		printf("  Itr %d of %d, a = %s, y = %s ",
-			i, n_maxitr, a.getNumber().c_str(), y.getNumber().c_str());
-		if (y == n-1) {
-			printf("(which is n-1)\n");
-		} else {
-			printf("\n");
+		if (output){
+			printf("  %sItr %d of %d, a = %s, y = %s",
+				string(als, ' ').c_str(), i, n_maxitr, a.getNumber().c_str(), y.getNumber().c_str());
+			if (y == n-1) {
+				printf(" (which is n-1)\n");
+			} else {
+				printf("\n");
+			}
 		}
 		if (y != 1 && y != n-1) {
 			for (int j = 1; j <= s-1 && y != n-1; ++j) {
 				y = y*y%n;
-				printf("    j = %d of %d, y = %s ", j, s-1, y.getNumber().c_str());
-				if (y == n-1) {
-					printf("(which is n-1)\n");
-				} else {
-					printf("\n");
+				if (output) {
+					printf("    %sj = %d of %d, y = %s", string(als, ' ').c_str(), j, s-1, y.getNumber().c_str());
+					if (y == n-1) {
+						printf(" (which is n-1)\n");
+					} else {
+						printf("\n");
+					}
 				}
 				if (y == 1) {
-					printf("Miller-Rabin found a strong witness %d\n", prime);
-					return;
+					if (output) {
+						printf("%sMiller-Rabin found a strong witness %d\n", string(als, ' ').c_str(), prime);
+					}
+					return false;
 				}
 			}
 			if (y != n-1) {
-				printf("Miller-Rabin found a strong witness %d\n", prime);
-				return;
+				if (output){
+					printf("%sMiller-Rabin found a strong witness %d\n", string(als, ' ').c_str(), prime);
+				}
+				return false;
 			}
 		}
 	}
-	printf("Miller-Rabin declares n to be a prime number\n");
+	if (output) {
+		printf("%sMiller-Rabin declares n to be a prime number\n", string(als, ' ').c_str());
+	}
+	return true;
 }

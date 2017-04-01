@@ -3,6 +3,11 @@
 
 #include <string>
 
-void trialdiv(const std::string&, const std::string&);
+bool trialdiv(
+	const std::string &number,
+	const std::string &primesfile,
+	bool output=true,
+	int addional_leading_space=0
+);
 
 #endif
