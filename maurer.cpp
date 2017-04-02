@@ -84,14 +84,14 @@ bigInteger maurer(int lvl, int k, istream &in, const string &primesfile) {
 		bigInteger R = RndOddNum(k+1-num_bits_in_q, in);
 		R = (R % I) + I + 1;
 		n = R * q * 2 + 1;
-		printf("  step 7, itr %lu: R = %s, n = %s\n",
+		printf("  step 7, itr %zd: R = %s, n = %s\n",
 			i, R.getNumber().c_str(), n.getNumber().c_str());
 		if (trialdiv(n.getNumber(), primesfile, true, 4)) {
 			bigInteger a;
 			do {
 				a = RndOddNum(n.bits(), in);
 			} while (a <= 1 || a >= n-1);
-			printf("  step 7.2.1, itr %lu: a = %s\n", i, a.getNumber().c_str());
+			printf("  step 7.2.1, itr %zd: a = %s\n", i, a.getNumber().c_str());
 			bigInteger b = computeY(a, n-1, n);
 			if (b == 1) {
 				b = computeY(a, R*2, n);
@@ -118,6 +118,6 @@ void maurer(
 	}
 	int k = atoi(numbits.c_str());
 	bigInteger n = maurer(0, k, in, primesfile);
-	printf("\nMaurer's Algorithm found an %lu-bit prime:\n  n = %s\n", 
+	printf("\nMaurer's Algorithm found an %zd-bit prime:\n  n = %s\n", 
 		n.bits(), n.getNumber().c_str());
 }
