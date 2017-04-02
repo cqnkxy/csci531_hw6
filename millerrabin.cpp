@@ -25,7 +25,7 @@ using namespace std;
 //        }
 //     3) return("prime")
 
-bigInteger computeY(bigInteger &a, bigInteger &r, bigInteger &n) {
+bigInteger computeY(const bigInteger &a, const bigInteger &r, const bigInteger &n) {
 	if (r == 1) {
 		return a % n;
 	}

@@ -20,13 +20,37 @@ using namespace::std;
 // then sets both bit zero (the least significant bit) and bit k-1 to one, 
 // sets all bits from k and above to zero in the BIGNUM, and returns the 
 // resulting BIGNUM.
+
+bigInteger RndOddNum(int k, istream &in) {
+	int x = ceil((double)k/8);
+	unsigned char byte;
+	string bytes;
+	for (int j = 0; j < x; ++j) {
+		if (!(in >> noskipws >> byte)) {
+			fatal("Not enough data in the rndfile!\n");
+		}
+		bytes += byte;
+	}
+	reverse(bytes.begin(), bytes.end());
+	// set 0 bit and k-1 bit to 1
+	bytes[0] |= 0x01;
+	bytes[(k-1)/8] |= 0x01 << ((k-1) % 8);
+	// set k bit and above to 0
+	unsigned char mask = 0xff;
+	for (int i = k % 8; i < 8; ++i) {
+		mask &= ~(1 << i);
+	}
+	bytes[k/8] &= mask;
+	reverse(bytes.begin(), bytes.end());
+	return binToBigInteger(bytes);
+}
+
 void rndsearch(
 	const std::string &numbits,
 	const std::string &maxitr,
 	const std::string &primesfile,
 	const std::string &rndfile
 ){
-	PrimesIterator itr(primesfile);
 	ifstream in(rndfile.c_str());
 	if (!in.is_open()) {
 		fatal("File %s can't be opened\n", rndfile.c_str());
@@ -34,29 +58,10 @@ void rndsearch(
 	if (!all_dec(maxitr) || !all_dec(numbits)) {
 		fatal("maxitr and numbits must be [0-9]\n");
 	}
-	int k = atoi(numbits.c_str()), x = ceil((double)k/8);
+	int k = atoi(numbits.c_str());
 	for (int i = 1; ; ++i) {
 		printf("RANDOM-SEARCH: iteration %d\n", i);
-		unsigned char byte;
-		string bytes;
-		for (int i = 0; i < x; ++i) {
-			if (!(in >> noskipws >> byte)) {
-				fatal("Not enough data in the rndfile!\n");
-			}
-			bytes += byte;
-		}
-		reverse(bytes.begin(), bytes.end());
-		// set 0 bit and k-1 bit to 1
-		bytes[0] |= 0x01;
-		bytes[(k-1)/8] |= 0x01 << ((k-1) % 8);
-		// set k bit and above to 0
-		unsigned char mask = 0xff;
-		for (int i = k % 8; i < 8; ++i) {
-			mask &= ~(1 << i);
-		}
-		bytes[k/8] &= mask;
-		reverse(bytes.begin(), bytes.end());
-		bigInteger n = binToBigInteger(bytes);
+		bigInteger n = RndOddNum(k, in);
 		printf("  n = %s\n", n.getNumber().c_str());
 		if (!trialdiv(n.getNumber(), primesfile, true, 2)) {
 			continue;

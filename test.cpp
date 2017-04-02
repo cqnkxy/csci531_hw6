@@ -56,9 +56,30 @@ void test_computeY() {
 	assert(y == 1);
 }
 
+void test_power() {
+	vector<bigInteger> nums{
+		6, 1, 6, 3, 4, 2, 6, 6, 6, 4, 7, 3, 8, 8, 0, 8, 4, 9, 0, 8
+	}, ans{
+		string("2227915756473955677973140996096"), 1, string("2227915756473955677973140996096"), 3486784401, 1, 65536, 7776, 36, 6, 262144, string("459986536544739960976801"), 387420489, 16777216, string("302231454903657293676544"), 0, string("302231454903657293676544"), string("17592186044416"), 3486784401, 0, string("37778931862957161709568")
+	};
+	vector<size_t> t{
+		39, 12, 39, 20, 0, 16, 5, 2, 1, 9, 28, 18, 8, 26, 16, 26, 22, 10, 23, 25
+	};
+	for (size_t i = 0; i < t.size(); ++i) {
+		assert(nums[i].power(t[i]) == ans[i]);
+	};
+}
+
+void test_bits() {
+	bigInteger n(string("18069603919893755869"));
+	assert(n.bits() == 64);
+}
+
 int main() {
 	test_sqrt();
 	test_divide();
 	test_binToBigInteger();
 	test_computeY();
+	test_power();
+	test_bits();
 }

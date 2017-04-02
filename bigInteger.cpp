@@ -67,6 +67,26 @@ bigInteger bigInteger::operator/ (const bigInteger &bigInt) const {
 	return res.first;
 }
 
+bigInteger &bigInteger::operator+= (const bigInteger &bigInt) {
+	*this = *this + bigInt;
+	return *this;
+}
+
+bigInteger &bigInteger::operator-= (const bigInteger &bigInt) {
+	*this = *this - bigInt;
+	return *this;
+}
+
+bigInteger &bigInteger::operator/= (const bigInteger &bigInt) {
+	*this = *this / bigInt;
+	return *this;
+}
+
+bigInteger &bigInteger::operator*= (const bigInteger &bigInt) {
+	*this = *this * bigInt;
+	return *this;
+}
+
 bigInteger bigInteger::operator% (const bigInteger &bigInt) const {
 	pair<string, string> res = divide(this->getNumber(), bigInt.getNumber());
 	return res.second;
@@ -84,6 +104,21 @@ bigInteger bigInteger::operator-(const bigInteger &bigInt) const {
 	return subtract(this->number, bigInt.getNumber());
 }
 
+bigInteger bigInteger::power(size_t t) const {
+	if (t == 0) {
+		return 1;
+	}
+	if (t == 1) {
+		return *this;
+	}
+	bigInteger half = this->power(t/2);
+	if (t & 0x1) {
+		return half * half * (*this);
+	} else {
+		return half * half;
+	}
+}
+
 bigInteger bigInteger::sqrt() const {
 	if (*this == 0 || *this == 1) {
 		return *this;
@@ -99,6 +134,16 @@ bigInteger bigInteger::sqrt() const {
 		}
 	}
 	return res;
+}
+
+size_t bigInteger::bits() const {
+	bigInteger copy(*this);
+	size_t cnt = 0;
+	while (copy != 0) {
+		cnt += 1;
+		copy /= 2;
+	}
+	return cnt;
 }
 
 pair<string, string> bigInteger::divide(const string &dividend, const string &divisor) {
@@ -218,4 +263,11 @@ bigInteger binToBigInteger(const string &bin) {
 		ans = ans * 256 + (unsigned char)bin[i];
 	}
 	return ans;
+}
+
+bigInteger gcd(bigInteger a, bigInteger b) {
+	if (a == 0 || b == 0) {
+		return a + b;
+	}
+	return gcd(b, a % b);
 }

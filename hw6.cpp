@@ -7,6 +7,7 @@
 #include "trialdiv.h"
 #include "millerrabin.h"
 #include "rndsearch.h"
+#include "maurer.h"
 
 using namespace std;
 
@@ -96,6 +97,26 @@ void parse_rndsearch(int argc, char *argv[]) {
 	rndsearch(numbits, maxitr, primesfile, rndfile);
 }
 
+void parse_maurer(int argc, char *argv[]) {
+	if (argc != 5) {
+		malformed_command();
+	}
+	string numbits, primesfile, rndfile;
+	for (int i = 2; i <= 4; ++i) {
+		string opt(argv[i]);
+		if (opt.substr(0, 3) == "-k=") {
+			numbits = opt.substr(3, -1);
+		} else if (opt.substr(0, 3) == "-p=") {
+			primesfile = opt.substr(3, -1);
+		} else if (opt.substr(0, 3) == "-r=") {
+			rndfile = opt.substr(3, -1);
+		} else {
+			malformed_command();
+		}
+	}
+	maurer(numbits, primesfile, rndfile);
+}
+
 void parse_cmd_run(int argc, char *argv[]) {
 	if (argc < 3) {
 		malformed_command();
@@ -107,6 +128,8 @@ void parse_cmd_run(int argc, char *argv[]) {
 		parse_millerrabin(argc, argv);
 	} else if (strcmp(argv[1], "rndsearch") == 0) {
 		parse_rndsearch(argc, argv);
+	} else if (strcmp(argv[1], "maurer") == 0) {
+		parse_maurer(argc, argv);
 	} else {
 		malformed_command();
 	}

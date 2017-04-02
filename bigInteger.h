@@ -18,6 +18,11 @@ public:
 	bool operator!= (const bigInteger &) const;
 	bigInteger operator+(const bigInteger &) const;
 	bigInteger operator-(const bigInteger &) const;
+	bigInteger &operator+=(const bigInteger &);
+	bigInteger &operator-=(const bigInteger &);
+	bigInteger &operator/=(const bigInteger &);
+	bigInteger &operator*=(const bigInteger &);
+	bigInteger power(size_t t) const;
 	bool operator< (const bigInteger &) const;
 	bool operator> (const bigInteger &) const;
 	bool operator>= (const bigInteger &) const;
@@ -26,6 +31,7 @@ public:
 	bigInteger operator/ (const bigInteger&) const;
 	bigInteger operator* (const bigInteger&) const;
 	bigInteger sqrt() const;
+	size_t bits() const;
 	const std::string &getNumber() const;
 	static std::pair<std::string, std::string> divide(const std::string&, const std::string&);
 	static std::string multiply(const std::string&, const std::string&);
@@ -35,5 +41,6 @@ public:
 
 std::pair<bigInteger, bigInteger> divmod(const bigInteger&, const bigInteger&);
 bigInteger binToBigInteger(const std::string &);
+bigInteger gcd(bigInteger a, bigInteger b);
 
 #endif
