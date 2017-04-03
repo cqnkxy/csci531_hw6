@@ -4,9 +4,9 @@ CXXFLAGS = -g -Wall
 CXX = g++
 
 hw6: $(OBJS) hw6.o 
-	$(CXX) $(CXXFLAGS) $(OBJS) hw6.o -o hw6
+	$(CXX) $(CXXFLAGS) $(OBJS) hw6.o -o hw6 -lssl -lcrypto -L/usr/local/opt/openssl/lib
 test: $(OBJS) test.o
-	$(CXX) -g -W -std=c++11 $(OBJS) test.o -o test
+	$(CXX) -g -W -std=c++11 $(OBJS) test.o -o test -lssl -lcrypto -L/usr/local/opt/openssl/lib
 
 maurer.o: maurer.h maurer.cpp
 	$(CXX) $(CXXFLAGS) -c maurer.cpp
@@ -23,7 +23,7 @@ bigInteger.o: bigInteger.h bigInteger.cpp
 hw6.o: hw6.cpp
 	$(CXX) $(CXXFLAGS) -c hw6.cpp
 trialdiv.o: trialdiv.h trialdiv.cpp
-	$(CXX) $(CXXFLAGS) -c trialdiv.cpp
+	$(CXX) $(CXXFLAGS) -c trialdiv.cpp -I/usr/local/opt/openssl/include
 test.o: test.cpp
 	$(CXX) -g -W -std=c++11 -c test.cpp
 
